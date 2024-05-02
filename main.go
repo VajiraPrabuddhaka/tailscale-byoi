@@ -4,15 +4,17 @@ import (
 	"io"
 	"log"
 	"net"
+	"os"
 
 	"golang.org/x/net/proxy"
 )
 
 const (
-	listenAddr      = "0.0.0.0:8080"
-	proxyAddr       = "localhost:1055"
-	destinationAddr = "100.95.126.2:8090" // Replace with actual IP and port
+	listenAddr = "0.0.0.0:8080"
+	proxyAddr  = "localhost:1055"
 )
+
+var destinationAddr = os.Getenv("DEST_ADDRESS")
 
 func handleConnection(conn net.Conn, dialer proxy.Dialer) {
 	defer conn.Close()
