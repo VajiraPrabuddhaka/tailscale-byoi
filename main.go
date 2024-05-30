@@ -17,7 +17,7 @@ const (
 
 // Config struct to hold the YAML configuration
 type Config struct {
-	PortMappings map[int]string `yaml:"port_mappings"`
+	PortMappings map[int]string `yaml:"portMappings"`
 }
 
 func handleConnection(conn net.Conn, dialer proxy.Dialer, destinationAddr string) {
@@ -42,15 +42,14 @@ func handleConnection(conn net.Conn, dialer proxy.Dialer, destinationAddr string
 }
 
 func main() {
-	// Read the YAML file
-	file, err := os.Open("Config.yaml")
+	// Read the configs
+	file, err := os.Open("/Config.yaml")
 	if err != nil {
 		log.Fatalf("error opening config file: %v", err)
 	}
 
 	defer file.Close()
 
-	// Read the file content
 	fileInfo, err := file.Stat()
 	if err != nil {
 		log.Fatalf("error: %v", err)
@@ -64,7 +63,6 @@ func main() {
 		log.Fatalf("error: %v", err)
 	}
 
-	// Unmarshal the YAML into the Config struct
 	var config Config
 	err = yaml.Unmarshal(fileContent, &config)
 	if err != nil {
@@ -77,7 +75,6 @@ func main() {
 		log.Fatalf("Failed to connect to SOCKS5 proxy: %v", err)
 	}
 
-	// Listen on each port specified in the configuration
 	for port, destinationAddr := range config.PortMappings {
 		listenAddr := fmt.Sprintf("0.0.0.0:%d", port)
 		go func(listenAddr, destinationAddr string) {
@@ -88,7 +85,6 @@ func main() {
 			defer listener.Close()
 			log.Printf("Listening on %s and forwarding to %s via proxy %s", listenAddr, destinationAddr, proxyAddr)
 
-			// Accept connections and handle them
 			for {
 				conn, err := listener.Accept()
 				if err != nil {
